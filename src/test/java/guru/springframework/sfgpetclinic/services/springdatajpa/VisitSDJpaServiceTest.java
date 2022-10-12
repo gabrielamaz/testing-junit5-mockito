@@ -15,6 +15,8 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +43,21 @@ class VisitSDJpaServiceTest {
     }
 
     @Test
+    void findALlBdd() {
+        //given
+        Visit visit = new Visit();
+        Set<Visit> visits = new HashSet<>();
+        visits.add(visit);
+        given(visitRepository.findAll()).willReturn(visits);
+
+        //when
+        service.findAll();
+
+        then(visitRepository).should().findAll();
+
+    }
+
+    @Test
     @DisplayName("Test find visit by id")
     void findById() {
         Visit visit = new Visit();
@@ -48,6 +65,19 @@ class VisitSDJpaServiceTest {
         Visit foundVisit = service.findById(1L);
         assertNotNull(foundVisit);
         verify(visitRepository).findById(anyLong());
+    }
+
+    @Test
+    void findByIdBdd() {
+        //given
+        Visit visit = new Visit();
+        given(visitRepository.findById(anyLong())).willReturn(Optional.of(visit));
+
+        //when
+        service.findById(1L);
+
+        //then
+        then(visitRepository).should().findById(anyLong());
     }
 
     @Test
@@ -61,6 +91,19 @@ class VisitSDJpaServiceTest {
     }
 
     @Test
+    void saveBdd() {
+        //given
+        Visit visit = new Visit();
+        given(visitRepository.save(any(Visit.class))).willReturn(visit);
+
+        //when
+        service.save(visit);
+
+        //then
+        then(visitRepository).should().save(any(Visit.class));
+    }
+
+    @Test
     @DisplayName("Test Delete visit object")
     void delete() {
         Visit visit = new Visit();
@@ -69,9 +112,32 @@ class VisitSDJpaServiceTest {
     }
 
     @Test
+    void deleteBdd() {
+        //given
+        Visit visit = new Visit();
+
+        //when
+        service.delete(visit);
+
+        //then
+        then(visitRepository).should().delete(any(Visit.class));
+    }
+
+    @Test
     @DisplayName("Test Delete visit by id")
     void deleteById() {
         service.deleteById(1L);
         verify(visitRepository).deleteById(anyLong());
+    }
+
+    @Test
+    void deleteByIdBdd() {
+        //given
+
+        //when
+        service.deleteById(1L);
+
+        //then
+        then(visitRepository).should().deleteById(anyLong());
     }
 }
